@@ -1,1 +1,6 @@
 /* This file is for your main application css. */
+
+body{
+  margin: 0;
+  padding: 0;
+}

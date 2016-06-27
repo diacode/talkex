@@ -1,3 +1,16 @@
-<p>Hello, <%= @nickname %></p>
+<div id="conversation">
+  <div id="videocall">    
+    <p>Hello, <%= @nickname %></p>
 
-<p>Welcome to room <strong><%= @room %></strong></p>
+    <p>Welcome to room <strong><%= @room %></strong></p>
+  </div>
+
+  <div id="chat">
+    <div id="history">
+    </div>
+
+    <form>
+      <input type="text" name="message[content]" />
+    </form>
+  </div>
+</div>
