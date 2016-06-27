@@ -1,0 +1,6 @@
+/_build
+/node_modules
+/deps
+/priv/static
+
+.DS_Store

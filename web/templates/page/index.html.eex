@@ -1,0 +1,6 @@
+<form action="/rooms" method="post">
+  <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
+  <input type="text" name="room[nickname]" placeholder="nickname" required="required" />
+  <input type="text" name="room[roomname]" placeholder="room" required="required" />
+  <input type="submit" value="Join" />
+</form>

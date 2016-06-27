@@ -1,0 +1,13 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.5
+  web:
+    build: .
+    command: sh -c 'mix phoenix.server'
+    volumes:
+      - .:/cwd
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db

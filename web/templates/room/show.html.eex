@@ -1,0 +1,3 @@
+<p>Hello, <%= @nickname %></p>
+
+<p>Welcome to room <strong><%= @room %></strong></p>
