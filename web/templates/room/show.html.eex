@@ -1,5 +1,5 @@
-<div id="conversation">
-  <div id="videocall">    
+<div id="conversation" data-room="<%= @room %>">
+  <div id="videocall">
     <p>Hello, <%= @nickname %></p>
 
     <p>Welcome to room <strong><%= @room %></strong></p>

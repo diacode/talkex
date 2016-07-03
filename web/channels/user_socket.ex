@@ -2,7 +2,7 @@ defmodule Talkex.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Talkex.RoomChannel
+  channel "room:*", Talkex.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
