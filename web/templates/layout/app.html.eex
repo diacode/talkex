@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
-  <body class="<%= controller_name(@conn) %> <%= action_name(@conn) %>">
+  <body class="<%= controller_name(@conn) %> <%= action_name(@conn) %>" data-controller="<%= controller_name(@conn) %>" data-action="<%= action_name(@conn) %>">
 
     <!-- <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
     <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p> -->

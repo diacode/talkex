@@ -19,3 +19,26 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
+import RoomShowView from "./room/show";
+
+class App{
+  constructor(){
+    this.initializers = {
+      room:{
+        show: function(){ new RoomShowView(); }
+      }
+    };
+
+    const body = document.getElementsByTagName('body')[0]
+    const controller = body.dataset.controller
+    const action =  body.dataset.action
+    const initializer = this.initializers[controller] && this.initializers[controller][action]
+
+    if (typeof initializer === "function") initializer()
+  }
+}
+
+(function(){
+    new App();
+})();
