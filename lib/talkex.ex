@@ -12,6 +12,8 @@ defmodule Talkex do
       supervisor(Talkex.Repo, []),
       # Start the endpoint when the application starts
       supervisor(Talkex.Endpoint, []),
+      # Presence supervisor
+      supervisor(Talkex.Presence, [])
       # Start your own worker by calling: Talkex.Worker.start_link(arg1, arg2, arg3)
       # worker(Talkex.Worker, [arg1, arg2, arg3]),
     ]
