@@ -2,7 +2,7 @@ defmodule Talkex.RoomChannel do
   use Phoenix.Channel
   alias Talkex.Presence
 
-  def join("room:" <> room_name, _message, socket) do
+  def join("room:" <> _room_name, _message, socket) do
     send(self, :after_join)
     {:ok, socket}
   end
