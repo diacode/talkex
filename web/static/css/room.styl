@@ -1,0 +1,108 @@
+html, body.room.show
+  height: 100%
+
+  main
+    height: 100%
+
+    #conversation
+      position: relative
+      width: 100%
+      height: 100%
+
+      #videocall
+        background: #000000
+        height: 100%
+        width: 50%
+        position: absolute
+        top: 0
+        left: 0
+
+      #chat
+        background: #ebebeb
+        position: absolute
+        top: 0
+        right: 0
+        width: 50%
+        height: 100%
+
+        #presence
+          background: #e4edff
+          width: 30%
+          height: 100%
+          position: absolute
+          right: 0
+          padding: 20px
+
+          h3
+            margin-top: 0
+            text-align: center
+
+          ul
+            margin: 0
+            padding: 0
+
+            li
+              list-style-type: none
+              margin: 7px 0
+
+              .status
+                display: inline-block
+                width: 10px
+                height: 10px
+                border-radius: 10px
+                margin-right: 3px
+
+                &.online
+                  background: #65bf12
+
+        #history
+          position: absolute
+          top: 0
+          left: 0
+          width: 70%
+          height: 80%
+          overflow: scroll
+          border-bottom: 1px solid #ccc
+
+          .message
+            padding: 10px 20px
+
+            .meta
+              margin-bottom: 10px
+
+              &:after
+                display: block
+                clear: both
+                content: ''
+
+              .sender
+                float: left
+                width: 50%
+
+              .timestamp
+                float: right
+                width: 50%
+                text-align: right
+
+            .content
+              background: #fff
+              border-radius: 3px
+              padding: 7px 10px
+              box-shadow: 0px 1px 3px #aaa
+
+        form
+          position: absolute
+          bottom: 0
+          left: 0
+          width: 70%
+          height: 20%
+          padding: 10px
+
+          input
+            display: block
+            width: 95%
+            height: 100%
+            margin: 0 auto
+            border-radius: 6px
+            border: 1px solid #ccc
+            outline: none

@@ -1,12 +1,33 @@
 <div id="conversation" data-room="<%= @room %>" data-nickname="<%= @nickname %>">
   <div id="videocall">
-    <p>Hello, <%= @nickname %></p>
-
-    <p>Welcome to room <strong><%= @room %></strong></p>
   </div>
 
   <div id="chat">
+    <div id="presence">
+      <h3>People connected</h3>
+
+      <ul>
+        <%= for connected_user <- ["fulano", "mengano", "zutano"] do %>
+          <li>
+            <span class="status online"></span>
+            <span><%= connected_user %></span>
+          </li>
+        <%= end %>
+      </ul>
+    </div>
+
     <div id="history">
+      <%= for n <- 1..15 do %>
+        <div class="message">
+          <div class="meta">
+            <div class="sender">Fulano</div>
+            <div class="timestamp">21:00</div>
+          </div>
+          <div class="content">
+            Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+          </div>
+        </div>
+      <%= end %>
     </div>
 
     <form>
