@@ -18,6 +18,8 @@ defmodule Talkex.Router do
 
     get "/", PageController, :index
     resources "/rooms", RoomController, only: [:create, :show]
+
+    get "/room-ui", RoomController, :ui
   end
 
   # Other scopes may use custom stacks.

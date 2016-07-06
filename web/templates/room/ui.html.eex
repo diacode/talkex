@@ -1,4 +1,4 @@
-<div id="conversation" data-room="<%= @room %>" data-nickname="<%= @nickname %>">
+<div id="conversation" data-room="asdf" data-nickname="johndoe">
   <div id="videocall">
   </div>
 
