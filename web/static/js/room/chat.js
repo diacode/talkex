@@ -8,6 +8,7 @@ export default class Chat extends React.Component {
     this.state = {
       history: [],
       presence: [],
+      connected: false,
     };
 
     this.connectToSocket(props.nickname);
@@ -38,14 +39,30 @@ export default class Chat extends React.Component {
       this.setState({ presence: Array.from(difference) });
     });
 
+    this.channel.on('new_msg', ::this._handleReceivedMessage);
+
     this.channel.join()
-      .receive('ok', resp => { console.log('Joined successfully', resp); })
+      .receive('ok', resp => {
+        console.log('Joined successfully', resp);
+        this.setState({ connected: true });
+      })
       .receive('error', resp => { console.log('Unable to join', resp); });
+  }
+
+  _handleReceivedMessage(payload) {
+    let history = this.state.history;
+    history.push(payload);
+    this.setState({ history: history });
+    this.historyDiv.scrollTop = this.historyDiv.scrollHeight;
   }
 
   _handleFormSubmit(e) {
     e.preventDefault();
-    alert('FORM SUBMITTED');
+    const message = this.myMessageInput.value;
+    if (message != '') {
+      this.channel.push('new_msg', { body: message });
+      this.myMessageInput.value = '';
+    }
   }
 
   _renderPresence() {
@@ -67,21 +84,23 @@ export default class Chat extends React.Component {
 
   _renderHistory() {
     const nodes = this.state.history.map((message, i) => {
+      const key = `msg_${message.author}_${message.timestamp}`;
+
       return (
-        <div className="message">
+        <div className="message" key={key}>
           <div className="meta">
-            <div className="sender">Fulano</div>
-            <div className="timestamp">21:00</div>
+            <div className="sender">{message.author}</div>
+            <div className="timestamp">{message.timestamp}</div>
           </div>
           <div className="content">
-            Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+            {message.body}
           </div>
         </div>
       );
     });
 
     return (
-      <div id="history">{nodes}</div>
+      <div ref={(ref) => this.historyDiv = ref} id="history">{nodes}</div>
     );
   }
 
@@ -95,8 +114,8 @@ export default class Chat extends React.Component {
 
         {this._renderHistory()}
 
-        <form onSubmit={this._handleFormSubmit}>
-          <input type="text" name="message[content]" />
+        <form onSubmit={::this._handleFormSubmit}>
+          <input ref={(ref) => this.myMessageInput = ref} type="text" disabled={!this.state.connected}/>
         </form>
       </div>
     );
