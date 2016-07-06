@@ -11,7 +11,7 @@
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-import "phoenix_html"
+import 'phoenix_html';
 
 // Import local files
 //
@@ -20,25 +20,25 @@ import "phoenix_html"
 
 // import socket from "./socket"
 
-import RoomShowView from "./room/show";
+import RoomShowView from './room/show';
 
 class App{
-  constructor(){
+  constructor() {
     this.initializers = {
-      room:{
-        show: function(){ new RoomShowView(); }
-      }
+      room: {
+        show: function () { new RoomShowView(); },
+      },
     };
 
-    const body = document.getElementsByTagName('body')[0]
-    const controller = body.dataset.controller
-    const action =  body.dataset.action
-    const initializer = this.initializers[controller] && this.initializers[controller][action]
+    const body = document.getElementsByTagName('body')[0];
+    const controller = body.dataset.controller;
+    const action =  body.dataset.action;
+    const initializer = this.initializers[controller] && this.initializers[controller][action];
 
-    if (typeof initializer === "function") initializer()
+    if (typeof initializer === 'function') initializer();
   }
 }
 
-(function(){
+(function () {
     new App();
-})();
+  })();

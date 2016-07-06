@@ -1,9 +1,9 @@
-import React, {PropTypes} from 'react';
-import Chat from "./chat";
-import VideoCall from "./video_call";
+import React, { PropTypes } from 'react';
+import Chat from './chat';
+import VideoCall from './video_call';
 
 export default class Conversation extends React.Component {
-  render(){
+  render() {
     return (
       <div id="conversation">
         <VideoCall/>

@@ -1,56 +1,56 @@
-import React, {PropTypes} from 'react';
-import {Socket} from "phoenix"
+import React, { PropTypes } from 'react';
+import { Socket } from 'phoenix';
 
 export default class Chat extends React.Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
 
     this.state = {
       history: [],
-      presence: []
-    }
+      presence: [],
+    };
 
-    this.connectToSocket(props.nickname)
-    this.joinChannel(props.roomname)
+    this.connectToSocket(props.nickname);
+    this.joinChannel(props.roomname);
   }
 
-  connectToSocket(identity){
-    this.socket = new Socket("/socket", {params: {nickname: identity}})
-    this.socket.connect()
+  connectToSocket(identity) {
+    this.socket = new Socket('/socket', { params: { nickname: identity } });
+    this.socket.connect();
   }
 
-  joinChannel(roomname){
-    this.channel = this.socket.channel(`room:${roomname}`, {})
+  joinChannel(roomname) {
+    this.channel = this.socket.channel(`room:${roomname}`, {});
 
     /* This event will be triggered when we connect to the channel and it will
      * return a payload with the all the people connected to the same channel */
-    this.channel.on("presence_state", payload => {
-      this.setState({presence: Object.keys(payload)})
-    })
+    this.channel.on('presence_state', payload => {
+      this.setState({ presence: Object.keys(payload) });
+    });
 
     // This event will be triggered everytime someone joins or leaves the channel
-    this.channel.on("presence_diff", payload => {
-      const currentPresence = new Set(this.state.presence)
-      const joins = new Set(Object.keys(payload.joins))
-      const leaves = new Set(Object.keys(payload.leaves))
-      const union = new Set([...currentPresence, ...joins])
-      const difference = new Set([...union].filter(x => !leaves.has(x)))
-      this.setState({presence: Array.from(difference)})
-    })
+    this.channel.on('presence_diff', payload => {
+      const currentPresence = new Set(this.state.presence);
+      const joins = new Set(Object.keys(payload.joins));
+      const leaves = new Set(Object.keys(payload.leaves));
+      const union = new Set([...currentPresence, ...joins]);
+      const difference = new Set([...union].filter(x => !leaves.has(x)));
+      this.setState({ presence: Array.from(difference) });
+    });
 
     this.channel.join()
-      .receive("ok", resp => { console.log("Joined successfully", resp) })
-      .receive("error", resp => { console.log("Unable to join", resp) })
+      .receive('ok', resp => { console.log('Joined successfully', resp); })
+      .receive('error', resp => { console.log('Unable to join', resp); });
   }
 
-  _handleFormSubmit(e){
-    e.preventDefault()
-    alert("FORM SUBMITTED")
+  _handleFormSubmit(e) {
+    e.preventDefault();
+    alert('FORM SUBMITTED');
   }
 
-  _renderPresence(){
+  _renderPresence() {
     const nodes = this.state.presence.map((user, i) => {
-      const key = `connected_user_${user}`
+      const key = `connected_user_${user}`;
 
       return (
         <li key={key}>
@@ -65,7 +65,7 @@ export default class Chat extends React.Component {
     );
   }
 
-  _renderHistory(){
+  _renderHistory() {
     const nodes = this.state.history.map((message, i) => {
       return (
         <div className="message">
@@ -85,7 +85,7 @@ export default class Chat extends React.Component {
     );
   }
 
-  render(){
+  render() {
     return (
       <div id="chat">
         <div id="presence">
