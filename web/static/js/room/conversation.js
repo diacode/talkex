@@ -7,7 +7,7 @@ export default class Conversation extends React.Component {
     return (
       <div id="conversation">
         <VideoCall/>
-        <Chat/>
+        <Chat nickname={this.props.nickname} roomname={this.props.roomname} />
       </div>
     );
   }
