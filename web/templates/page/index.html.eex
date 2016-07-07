@@ -1,6 +1,17 @@
+<header>Talkex</header>
+
 <form action="/rooms" method="post">
   <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
-  <input type="text" name="room[nickname]" placeholder="nickname" required="required" />
-  <input type="text" name="room[roomname]" placeholder="room" required="required" />
-  <input type="submit" value="Join" />
+
+  <div class="field">
+    <input type="text" name="room[nickname]" placeholder="nickname" required="required" />
+  </div>
+
+  <div class="field">
+    <input type="text" name="room[roomname]" placeholder="room" required="required" />
+  </div>
+
+  <div class="actions">
+    <input type="submit" value="join" />
+  </div>
 </form>

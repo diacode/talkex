@@ -1,0 +1,50 @@
+@import 'https://fonts.googleapis.com/css?family=Prompt';
+
+body.page.index
+  background: linear-gradient(rgba(48, 57, 118, 0.85), rgba(48, 57, 118, 0.85)), url("/images/sayagata-400px.png")
+  background-repeat: repeat
+  position: relative
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+
+  main
+    transform: translate(-50%, -10%)
+    position: absolute
+    width: 450px
+    top: 40%
+    left: 50%
+    text-align: center
+
+    header
+      font-family: 'Prompt', sans-serif
+      text-align: center
+      margin-bottom: 1em
+      color: #fff
+      font-size: 45px
+
+  h3
+    color: #fff
+
+  form
+
+    .field
+      margin: .5em 0
+
+    input
+      &[type="text"]
+      &[type="email"],
+      &[type="password"],
+      &[type="submit"]
+        border: 0px none
+        width: 350px
+        padding: 1em
+        font-size: 1.1em
+
+      &[type="submit"]
+        background-color: #3BAFDA
+        border-radius: 5px
+        color: #fff
+
+    .actions
+      margin-bottom: 1em
