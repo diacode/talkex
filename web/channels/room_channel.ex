@@ -1,5 +1,6 @@
 defmodule Talkex.RoomChannel do
   use Phoenix.Channel
+  use Timex
   alias Talkex.Presence
 
   def join("room:" <> _room_name, _message, socket) do
@@ -10,14 +11,18 @@ defmodule Talkex.RoomChannel do
   def handle_info(:after_join, socket) do
     push socket, "presence_state", Presence.list(socket)
     {:ok, _} = Presence.track(socket, socket.assigns.nickname, %{
-      online_at: inspect(System.system_time(:seconds)),
       status: "online"
     })
     {:noreply, socket}
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast! socket, "new_msg", %{body: body, author: socket.assigns.nickname, timestamp: :os.system_time(:milli_seconds)}
+    broadcast! socket, "new_msg", %{
+      body: body,
+      author: socket.assigns.nickname,
+      sent_at: DateTime.now |> Timex.format("%H:%M", :strftime) |> elem(1)
+    }
+    
     {:noreply, socket}
   end
 

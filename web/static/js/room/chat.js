@@ -134,14 +134,14 @@ export default class Chat extends React.Component {
   }
 
   _renderHistory() {
-    const nodes = this.state.history.map((message, i) => {
-      const key = `msg_${message.author}_${message.timestamp}`;
+    const nodes = this.state.history.map((message, idx) => {
+      const key = `msg_${idx}`;
 
       return (
         <div className="message" key={key}>
           <div className="meta">
             <div className="sender">{message.author}</div>
-            <div className="timestamp">{message.timestamp}</div>
+            <div className="sent_at">{message.sent_at}</div>
           </div>
           <div className="content">
             {message.body}
