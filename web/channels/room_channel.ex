@@ -10,13 +10,21 @@ defmodule Talkex.RoomChannel do
   def handle_info(:after_join, socket) do
     push socket, "presence_state", Presence.list(socket)
     {:ok, _} = Presence.track(socket, socket.assigns.nickname, %{
-      online_at: inspect(System.system_time(:seconds))
+      online_at: inspect(System.system_time(:seconds)),
+      status: "online"
     })
     {:noreply, socket}
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
     broadcast! socket, "new_msg", %{body: body, author: socket.assigns.nickname, timestamp: :os.system_time(:milli_seconds)}
+    {:noreply, socket}
+  end
+
+  def handle_in("new_status", %{"status" => status}, socket) do
+    {:ok, _} = Presence.update(socket, socket.assigns.nickname, %{
+      status: status
+    })
     {:noreply, socket}
   end
 end
