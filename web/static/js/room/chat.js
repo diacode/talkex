@@ -7,7 +7,7 @@ export default class Chat extends React.Component {
 
     this.state = {
       history: [],
-      presence: [],
+      presence: {},
       connected: false,
     };
 
@@ -26,17 +26,40 @@ export default class Chat extends React.Component {
     /* This event will be triggered when we connect to the channel and it will
      * return a payload with the all the people connected to the same channel */
     this.channel.on('presence_state', payload => {
-      this.setState({ presence: Object.keys(payload) });
+      console.log('presence_state', payload)
+      this.setState({ presence: payload });
     });
 
     // This event will be triggered everytime someone joins or leaves the channel
     this.channel.on('presence_diff', payload => {
-      const currentPresence = new Set(this.state.presence);
-      const joins = new Set(Object.keys(payload.joins));
-      const leaves = new Set(Object.keys(payload.leaves));
-      const union = new Set([...currentPresence, ...joins]);
-      const difference = new Set([...union].filter(x => !leaves.has(x)));
-      this.setState({ presence: Array.from(difference) });
+      console.log('presence_diff', payload)
+
+      let currentPresence = Object.assign({}, this.state.presence)
+
+      // Handling joins
+      for(let key of Object.keys(payload.joins)){
+        if(currentPresence[key]){
+          currentPresence[key].metas.push(payload.joins[key].metas[0])
+        }else{
+          currentPresence[key] = payload.joins[key]
+        }
+      }
+
+      // Handling leaves
+      for(let key of Object.keys(payload.leaves)){
+        if(currentPresence[key].metas.length == 1){
+          delete currentPresence[key]
+        }else{
+          const refIndex = currentPresence[key].metas.findIndex((element, index) => {
+            return element.phx_ref == payload.leaves[key].metas[0].phx_ref
+          });
+
+          currentPresence[key].metas.splice(refIndex, 1)
+        }
+      }
+
+      console.log("PRESENCE UPDATED", currentPresence)
+      this.setState({ presence: currentPresence });
     });
 
     this.channel.on('new_msg', ::this._handleReceivedMessage);
@@ -65,14 +88,27 @@ export default class Chat extends React.Component {
     }
   }
 
+  _handleOnlineStatusChange(e){
+    e.preventDefault()
+    this.channel.push('new_status', {status: e.target.value})
+  }
+
   _renderPresence() {
-    const nodes = this.state.presence.map((user, i) => {
-      const key = `connected_user_${user}`;
+    const presence = this.state.presence
+    const connectedPeople = Object.keys(presence).map(key => {
+      let item = presence[key]
+      item.nickname = key
+      return item
+    });
+
+    const nodes = connectedPeople.map((user, i) => {
+      const key = `connected_user_${user.nickname}`;
+      const status = user.metas[0].status
 
       return (
         <li key={key}>
-          <span className="status online"></span>
-          <span>{user}</span>
+          <span className={`status ${status}`}></span>
+          <span>{user.nickname}</span>
         </li>
       );
     });
@@ -80,6 +116,18 @@ export default class Chat extends React.Component {
     return (
       <ul>{nodes}</ul>
     );
+  }
+
+  _renderOnlineStatusControl() {
+    return (
+      <div id="online_status_control">
+        Current status:
+        <select onChange={::this._handleOnlineStatusChange}>
+          <option value="online">online</option>
+          <option value="away">away</option>
+        </select>
+      </div>
+    )
   }
 
   _renderHistory() {
@@ -110,6 +158,7 @@ export default class Chat extends React.Component {
         <div id="presence">
           <h3>People connected</h3>
           {this._renderPresence()}
+          {this._renderOnlineStatusControl()}
         </div>
 
         {this._renderHistory()}
