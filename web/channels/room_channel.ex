@@ -19,9 +19,4 @@ defmodule Talkex.RoomChannel do
     broadcast! socket, "new_msg", %{body: body, author: socket.assigns.nickname, timestamp: :os.system_time(:milli_seconds)}
     {:noreply, socket}
   end
-
-  def handle_out("new_msg", payload, socket) do
-    push socket, "new_msg", payload
-    {:noreply, socket}
-  end
 end
