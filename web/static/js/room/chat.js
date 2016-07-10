@@ -79,12 +79,15 @@ export default class Chat extends React.Component {
     this.historyDiv.scrollTop = this.historyDiv.scrollHeight;
   }
 
-  _handleFormSubmit(e) {
-    e.preventDefault();
-    const message = this.myMessageInput.value;
-    if (message != '') {
-      this.channel.push('new_msg', { body: message });
-      this.myMessageInput.value = '';
+  _handleKeyPress(e) {
+    if (e.charCode == 13) {
+      e.preventDefault();
+      const message = this.myMessageInput.value;
+
+      if (message != '') {
+        this.channel.push('new_msg', { body: message });
+        this.myMessageInput.value = '';
+      }
     }
   }
 
@@ -163,9 +166,11 @@ export default class Chat extends React.Component {
 
         {this._renderHistory()}
 
-        <form onSubmit={::this._handleFormSubmit}>
-          <input ref={(ref) => this.myMessageInput = ref} type="text"
-            disabled={!this.state.connected} />
+        <form>
+          <textarea ref={(ref) => this.myMessageInput = ref} type="text"
+            disabled={!this.state.connected} placeholder="Type your message here"
+            onKeyPress={::this._handleKeyPress}>
+          </textarea>
         </form>
       </div>
     );
