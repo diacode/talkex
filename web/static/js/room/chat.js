@@ -26,39 +26,39 @@ export default class Chat extends React.Component {
     /* This event will be triggered when we connect to the channel and it will
      * return a payload with the all the people connected to the same channel */
     this.channel.on('presence_state', payload => {
-      console.log('presence_state', payload)
+      console.log('presence_state', payload);
       this.setState({ presence: payload });
     });
 
     // This event will be triggered everytime someone joins or leaves the channel
     this.channel.on('presence_diff', payload => {
-      console.log('presence_diff', payload)
+      console.log('presence_diff', payload);
 
-      let currentPresence = Object.assign({}, this.state.presence)
+      let currentPresence = Object.assign({}, this.state.presence);
 
       // Handling joins
-      for(let key of Object.keys(payload.joins)){
-        if(currentPresence[key]){
-          currentPresence[key].metas.push(payload.joins[key].metas[0])
-        }else{
-          currentPresence[key] = payload.joins[key]
+      for (let key of Object.keys(payload.joins)) {
+        if (currentPresence[key]) {
+          currentPresence[key].metas.push(payload.joins[key].metas[0]);
+        }else {
+          currentPresence[key] = payload.joins[key];
         }
       }
 
       // Handling leaves
-      for(let key of Object.keys(payload.leaves)){
-        if(currentPresence[key].metas.length == 1){
-          delete currentPresence[key]
-        }else{
+      for (let key of Object.keys(payload.leaves)) {
+        if (currentPresence[key].metas.length == 1) {
+          delete currentPresence[key];
+        }else {
           const refIndex = currentPresence[key].metas.findIndex((element, index) => {
-            return element.phx_ref == payload.leaves[key].metas[0].phx_ref
+            return element.phx_ref == payload.leaves[key].metas[0].phx_ref;
           });
 
-          currentPresence[key].metas.splice(refIndex, 1)
+          currentPresence[key].metas.splice(refIndex, 1);
         }
       }
 
-      console.log("PRESENCE UPDATED", currentPresence)
+      console.log('PRESENCE UPDATED', currentPresence);
       this.setState({ presence: currentPresence });
     });
 
@@ -88,22 +88,22 @@ export default class Chat extends React.Component {
     }
   }
 
-  _handleOnlineStatusChange(e){
-    e.preventDefault()
-    this.channel.push('new_status', {status: e.target.value})
+  _handleOnlineStatusChange(e) {
+    e.preventDefault();
+    this.channel.push('new_status', { status: e.target.value });
   }
 
   _renderPresence() {
-    const presence = this.state.presence
+    const presence = this.state.presence;
     const connectedPeople = Object.keys(presence).map(key => {
-      let item = presence[key]
-      item.nickname = key
-      return item
+      let item = presence[key];
+      item.nickname = key;
+      return item;
     });
 
     const nodes = connectedPeople.map((user, i) => {
       const key = `connected_user_${user.nickname}`;
-      const status = user.metas[0].status
+      const status = user.metas[0].status;
 
       return (
         <li key={key}>
@@ -127,7 +127,7 @@ export default class Chat extends React.Component {
           <option value="away">away</option>
         </select>
       </div>
-    )
+    );
   }
 
   _renderHistory() {
@@ -164,7 +164,8 @@ export default class Chat extends React.Component {
         {this._renderHistory()}
 
         <form onSubmit={::this._handleFormSubmit}>
-          <input ref={(ref) => this.myMessageInput = ref} type="text" disabled={!this.state.connected}/>
+          <input ref={(ref) => this.myMessageInput = ref} type="text"
+            disabled={!this.state.connected} />
         </form>
       </div>
     );
