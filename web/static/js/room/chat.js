@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Socket } from 'phoenix';
+import { Socket, Presence } from 'phoenix';
 
 export default class Chat extends React.Component {
   constructor(props) {
@@ -25,41 +25,20 @@ export default class Chat extends React.Component {
 
     /* This event will be triggered when we connect to the channel and it will
      * return a payload with the all the people connected to the same channel */
-    this.channel.on('presence_state', payload => {
-      console.log('presence_state', payload);
-      this.setState({ presence: payload });
+    this.channel.on('presence_state', initialPresence => {
+      console.log('presence_state', initialPresence);
+      const syncedPresence = Presence.syncState(this.state.presence, initialPresence);
+      this.setState({ presence: syncedPresence });
     });
 
-    // This event will be triggered everytime someone joins or leaves the channel
-    this.channel.on('presence_diff', payload => {
-      console.log('presence_diff', payload);
-
-      let currentPresence = Object.assign({}, this.state.presence);
-
-      // Handling joins
-      for (let key of Object.keys(payload.joins)) {
-        if (currentPresence[key]) {
-          currentPresence[key].metas.push(payload.joins[key].metas[0]);
-        }else {
-          currentPresence[key] = payload.joins[key];
-        }
-      }
-
-      // Handling leaves
-      for (let key of Object.keys(payload.leaves)) {
-        if (currentPresence[key].metas.length == 1) {
-          delete currentPresence[key];
-        }else {
-          const refIndex = currentPresence[key].metas.findIndex((element, index) => {
-            return element.phx_ref == payload.leaves[key].metas[0].phx_ref;
-          });
-
-          currentPresence[key].metas.splice(refIndex, 1);
-        }
-      }
-
-      console.log('PRESENCE UPDATED', currentPresence);
-      this.setState({ presence: currentPresence });
+    /* This event will be triggered everytime someone joins or leaves the
+     * channel. Changing the status from online to away or viceversa will
+     * trigger a presence_diff event on the channel with a join and a leave. */
+    this.channel.on('presence_diff', diff => {
+      console.log('presence_diff', diff);
+      const oldPresence = this.state.presence;
+      const syncedPresence = Presence.syncDiff(oldPresence, diff);
+      this.setState({ presence: syncedPresence });
     });
 
     this.channel.on('new_msg', ::this._handleReceivedMessage);
