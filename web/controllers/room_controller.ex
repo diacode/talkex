@@ -15,9 +15,4 @@ defmodule Talkex.RoomController do
     |> assign(:room, params["id"])
     |> render("show.html")
   end
-
-  def ui(conn, _params) do
-    conn
-    |> render("ui.html")
-  end
 end
