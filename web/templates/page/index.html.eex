@@ -15,3 +15,7 @@
     <input type="submit" value="join" />
   </div>
 </form>
+
+<footer>
+  Crafted by <br> <a href="https://diacode.com"><img src="/images/diacode-logo.png" /></a>
+</footer>

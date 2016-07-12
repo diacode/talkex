@@ -4,17 +4,16 @@ body.page.index
   background: linear-gradient(rgba(48, 57, 118, 0.85), rgba(48, 57, 118, 0.85)), url("/images/sayagata-400px.png")
   background-repeat: repeat
   position: relative
-  display: flex
-  flex-direction: column
-  min-height: 100vh
+  height: 100%
 
   main
-    transform: translate(-50%, -10%)
+    transform: translate(-50%, -50%)
     position: absolute
     width: 450px
-    top: 40%
+    top: 50%
     left: 50%
     text-align: center
+    height: auto !important
 
     header
       font-family: 'Prompt', sans-serif
@@ -48,3 +47,14 @@ body.page.index
 
     .actions
       margin-bottom: 1em
+
+  footer
+    margin-top: 75px
+    font-family: 'Prompt', sans-serif
+    color: #8e96ca
+    text-align: center
+    font-size: 15px
+    line-height: 40px
+    
+    img
+      width: 100px
