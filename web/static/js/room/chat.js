@@ -22,9 +22,21 @@ export default class Chat extends React.Component {
 
   joinChannel(roomname) {
     this.channel = this.socket.channel(`room:${roomname}`, {});
+    this.setupChannelEvents()
+    this.channel.join()
+      .receive('ok', resp => {
+        console.log('Joined successfully', resp);
+        this.setState({ connected: true });
+      })
+      .receive('error', resp => {
+        console.log('Unable to join', resp);
+      });
+  }
 
+  setupChannelEvents(){
     /* This event will be triggered when we connect to the channel and it will
-     * return a payload with the all the people connected to the same channel */
+     * return a payload with the all the people connected to the same channel
+     * except me. */
     this.channel.on('presence_state', initialPresence => {
       console.log('presence_state', initialPresence);
       const syncedPresence = Presence.syncState(this.state.presence, initialPresence);
@@ -33,7 +45,11 @@ export default class Chat extends React.Component {
 
     /* This event will be triggered everytime someone joins or leaves the
      * channel. Changing the status from online to away or viceversa will
-     * trigger a presence_diff event on the channel with a join and a leave. */
+     * trigger a presence_diff event on the channel with a join and a leave.
+     * When the current user join the channel this event will be triggered
+     * right after `presence_state` to notify myself and the rest of users in
+     * the room that I've just joined.
+     */
     this.channel.on('presence_diff', diff => {
       console.log('presence_diff', diff);
       const oldPresence = this.state.presence;
@@ -42,13 +58,6 @@ export default class Chat extends React.Component {
     });
 
     this.channel.on('new_msg', ::this._handleReceivedMessage);
-
-    this.channel.join()
-      .receive('ok', resp => {
-        console.log('Joined successfully', resp);
-        this.setState({ connected: true });
-      })
-      .receive('error', resp => { console.log('Unable to join', resp); });
   }
 
   _handleReceivedMessage(payload) {
