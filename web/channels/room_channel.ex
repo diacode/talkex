@@ -2,6 +2,8 @@ defmodule Talkex.RoomChannel do
   use Phoenix.Channel
   use Timex
   alias Talkex.Presence
+  alias Talkex.Repo
+  alias Talkex.Message
 
   def join("room:" <> _room_name, _message, socket) do
     send(self, :after_join)
@@ -17,12 +19,20 @@ defmodule Talkex.RoomChannel do
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
+    %Message{}
+    |> Message.changeset(%{
+      content: body,
+      author: socket.assigns.nickname,
+      room: String.replace_prefix(socket.topic, "room:", "")
+    })
+    |> Repo.insert
+
     broadcast! socket, "new_msg", %{
       body: body,
       author: socket.assigns.nickname,
       sent_at: DateTime.now |> Timex.format("%H:%M", :strftime) |> elem(1)
     }
-    
+
     {:noreply, socket}
   end
 
