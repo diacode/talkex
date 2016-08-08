@@ -58,12 +58,21 @@ export default class Chat extends React.Component {
     });
 
     this.channel.on('new_msg', ::this._handleReceivedMessage);
+
+    this.channel.on('message_history', ::this._handleReceivedMessageHistory);
   }
 
   _handleReceivedMessage(payload) {
     let history = this.state.history;
-    history.push(payload);
+    history.push(payload.message);
     this.setState({ history: history });
+    this.historyDiv.scrollTop = this.historyDiv.scrollHeight;
+  }
+
+  _handleReceivedMessageHistory(payload){
+    this.setState({
+      history: payload.messages.concat(this.state.history)
+    });
     this.historyDiv.scrollTop = this.historyDiv.scrollHeight;
   }
 
@@ -129,10 +138,10 @@ export default class Chat extends React.Component {
         <div className="message" key={key}>
           <div className="meta">
             <div className="sender">{message.author}</div>
-            <div className="sent_at">{message.sent_at}</div>
+            <div className="sent_at">{message.inserted_at}</div>
           </div>
           <div className="content">
-            {message.body}
+            {message.content}
           </div>
         </div>
       );

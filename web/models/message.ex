@@ -1,6 +1,8 @@
 defmodule Talkex.Message do
   use Talkex.Web, :model
 
+  @derive {Poison.Encoder, only: [:room, :author, :content, :inserted_at]}
+
   schema "messages" do
     field :room, :string
     field :author, :string

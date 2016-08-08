@@ -1,6 +1,7 @@
 defmodule Talkex.RoomChannel do
   use Phoenix.Channel
   use Timex
+  import Ecto.Query
   alias Talkex.Presence
   alias Talkex.Repo
   alias Talkex.Message
@@ -11,29 +12,35 @@ defmodule Talkex.RoomChannel do
   end
 
   def handle_info(:after_join, socket) do
+    # Presence tracking
     push socket, "presence_state", Presence.list(socket)
     {:ok, _} = Presence.track(socket, socket.assigns.nickname, %{
       status: "online"
     })
+
+    # Sending message history to client after joining the room
+    room_name = get_room_from_socket(socket)
+    messages = Repo.all(
+      from m in Message, where: m.room == ^room_name, order_by: m.inserted_at
+    )
+    push socket, "message_history", %{messages: messages}
     {:noreply, socket}
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
-    %Message{}
-    |> Message.changeset(%{
+    changeset = Message.changeset(%Message{}, %{
       content: body,
       author: socket.assigns.nickname,
-      room: String.replace_prefix(socket.topic, "room:", "")
+      room: get_room_from_socket(socket)
     })
-    |> Repo.insert
 
-    broadcast! socket, "new_msg", %{
-      body: body,
-      author: socket.assigns.nickname,
-      sent_at: DateTime.now |> Timex.format("%H:%M", :strftime) |> elem(1)
-    }
-
-    {:noreply, socket}
+    case Repo.insert(changeset) do
+      {:ok, message} ->
+        broadcast! socket, "new_msg", %{message: message}
+        {:noreply, socket}
+      {:error, _changeset} ->
+        {:reply, {:error, %{error: "Error persisting the message"}}, socket}
+    end
   end
 
   def handle_in("new_status", %{"status" => status}, socket) do
@@ -41,5 +48,9 @@ defmodule Talkex.RoomChannel do
       status: status
     })
     {:noreply, socket}
+  end
+
+  defp get_room_from_socket(socket) do
+    String.replace_prefix(socket.topic, "room:", "")
   end
 end
