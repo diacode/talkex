@@ -1,6 +1,5 @@
 defmodule Talkex.RoomChannel do
   use Phoenix.Channel
-  use Timex
   import Ecto.Query
   alias Talkex.Presence
   alias Talkex.Repo
