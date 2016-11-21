@@ -9,7 +9,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y wget curl
+    apt-get install -y wget curl inotify-tools
 
 # install Node.js (>= 5.0.0) and NPM in order to satisfy brunch.io dependencies
 # See http://www.phoenixframework.org/docs/installation#section-node-js-5-0-0-
